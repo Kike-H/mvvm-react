@@ -1,26 +1,25 @@
-import { makeObservable, observable, computed, action } from "mobx";
+import { makeObservable, observable, action } from "mobx";
+import { getData } from "./Helpers/API";
+import { Characters } from "./Model";
 
 export class ViewModel {
-  count: number = 0;
+  characters: Characters = {
+    info: { count: 0, pages: 0, next: "", prev: "" },
+    results: [],
+  };
 
   constructor() {
     makeObservable(this, {
-      count: observable,
-      isNegative: computed,
-      add: action,
-      substract: action
+      characters: observable,
+      setCharacters: action,
     });
   }
 
-  get isNegative(): String {
-    return this.count < 0 ? "Yes" : "No";
+  async getCharacters() {
+    getData<Characters>(1).then((data) => this.setCharacters(data));
   }
 
-  add() {
-    this.count++;
-  }
-
-  substract() {
-    this.count--;
+  setCharacters(data: Characters) {
+    this.characters = data;
   }
 }
